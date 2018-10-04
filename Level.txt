@@ -6,8 +6,8 @@
 #oooo#ooo#ooo#oooo#
 ####o###o#o###o####
 xxx#o#ooooooo#o#xxx
-####o#o## ##o#o####
-ooooooo# 1 #ooooooo
+####o#o##1##o#o####
+ooooooo#111#ooooooo
 ####o#o#####o#o####
 xxx#o#ooooooo#o#xxx
 ####o#o#####o#o####

@@ -10,38 +10,31 @@ from player import Player
 
 
 class Game:
-
     def __init__(self):
         self._running = True
         self._clock = pg.time.Clock()
         self.FPS = 10
 
-        self.ghostPos = []
+        self.ghosts = []
         self.score = 0
 
     def on_init(self):
+        self._running = True
 
-        # Initialize level. Level class contains walls, points and superpoints
         self.level = mapGen.Map()
         self.level.makeLevelVariables()
-
-        # Initialize Draw class
         self.draw = Draw()
+        self.collision = Collision()
 
         # Get player and ghost variables from level class
         self.playerPos = self.level.playerPos
-        self.ghostPos = self.level.ghosts
+        ghostPos = self.level.ghosts
 
-        self._running = True
-
-        # Initialize player class
         self.player = Player(self.playerPos, self.level.walls)
 
-        # Initialize Ghost class
-        self.ghost1 = Ghost(self.ghostPos[0], self.level.walls)
-
-        # Initialize Collision class
-        self.collision = Collision()
+        self.ghosts = []
+        for i in range(0, len(ghostPos)):
+            self.ghosts.append(Ghost(ghostPos[i], self.level.walls, Ghost.pathFindingAlgorithms[i], i))
 
     def on_event(self, event):
         if event.type == QUIT or \
@@ -54,11 +47,12 @@ class Game:
 
         self.playerPos = self.player.movePlayer()
 
-        self.ghostPos[0] = self.ghost1.moveGhost(self.playerPos, self.ghostPos[0])
+        for ghost in self.ghosts:
+            ghost.move(self.playerPos)
 
-        # Update collision class
-        self.collision.update(self.level.points, self.playerPos, self.level.superpoints, self.ghostPos)
+        self.collision.update(self.level.points, self.playerPos, self.level.superpoints)
 
+        self.ghosts = self.collision.checkGhostCollision(self.playerPos, self.ghosts)
         # Get variables
         self.score = self.collision.score
         self.level.points = self.collision.points
@@ -71,7 +65,8 @@ class Game:
         self.draw.drawPoints(self.level.points)
         self.draw.drawSuperPoints(self.level.superpoints)
         self.draw.drawPlayer(self.playerPos)
-        self.draw.drawGhosts(self.ghostPos)
+        self.draw.drawGhosts(self.ghosts)
+        self.draw.drawScore(self.score)
 
         pg.display.flip()
 

@@ -9,7 +9,7 @@ class Collision():
         print("Collision class initialized.")
         self.score = 0
 
-    def update(self, points, playerPos, superPoints, ghostPos):
+    def update(self, points, playerPos, superPoints):
         self.points = points
         self.superPoints = superPoints
         self.playerPos = playerPos
@@ -22,8 +22,11 @@ class Collision():
         for i, (j, k) in enumerate(superPoints):
             if (playerPos[0], playerPos[1]) == (j, k):
                 del self.superPoints[i]
-                self.score += 5
+                self.score += 10
 
-        for i, (j, k) in enumerate(ghostPos):
-            if (playerPos[0], playerPos[1]) == (j, k):
-                print("You ded son!")
+    def checkGhostCollision(self, playerPos, ghosts):
+        for ghost in ghosts:
+            if ghost.position == playerPos:
+                self.score -= 100
+                ghosts.remove(ghost)
+        return ghosts

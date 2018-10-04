@@ -13,7 +13,7 @@ class Player():
         self.moveHor = 0
         self.moveVert = 0
         self.walls = walls
-        self.debug = False
+        self.debug = True
 
         if self.debug: print("Player class initialized.")
 
@@ -47,13 +47,13 @@ class Player():
                 x = (x[0] + 1, x[1])
             elif h == -1:
                 x = (x[0] - 1, x[1])
-            h = 0
+            # h = 0
         elif v != 0:
             if v == 1:
                 x = (x[0], x[1] - 1)
             elif v == -1:
                 x = (x[0], x[1] + 1)
-            v = 0
+            # v = 0
 
         if not self.isBlocked(x[0], x[1]):
             if x[0] < 0:

@@ -13,21 +13,20 @@ class Draw():
         self._display_surface = None
         self._flags = pg.HWSURFACE | pg.DOUBLEBUF
 
-        self.BGCOLOR = (0, 0, 0)
+        self.BGCOLOR = (42,45,52)
         self.DARKGRAY = (40, 40, 40)
         self.WHITE = (255, 255, 255)
 
-        self.pointColour = (255, 255, 255)
+        self.pointColour = (255, 153, 0)
         self.superPointColour = (255, 40, 255)
-        self.playerColour = (0, 255, 255)
-        self.ghostColour = (255, 255, 255)
+        self.playerColour = (255, 255, 0)
         self.wallColour = (40, 40, 40)
 
         self.wallColours = [
-            (53,255,105),
-            (68,204,255),
-            (116,148,234),
-            (40, 40, 40),
+            (73,73,71),
+            (70,73,71),
+            (65,73,71),
+            (60,73,71),
             ]
 
         pg.init()
@@ -38,7 +37,7 @@ class Draw():
 
     def update(self, pg):
         self._display_surface.fill(self.BGCOLOR)
-        self.drawGrid(pg)
+        # self.drawGrid(pg)
 
     def drawGrid(self, pg):
         for x in range(0, self._width, self._cellsize):
@@ -48,7 +47,16 @@ class Draw():
         for y in range(0, self._height, self._cellsize):
             pg.draw.line(self._display_surface,
                          self.DARKGRAY, (0, y), (self._width, y))
-        pass
+
+    def drawScore(self, score):
+        pg.draw.rect(self._display_surface, self.WHITE,
+                     (0, 0, 120, 40))
+
+        BASICFONT = pg.font.Font('freesansbold.ttf',18)
+        scoreSurf = BASICFONT.render('Score: %s' % (score), True, self.BGCOLOR)
+        scoreRect = scoreSurf.get_rect()
+        scoreRect.topleft = (10,10)
+        self._display_surface.blit(scoreSurf,scoreRect)
 
     def drawWalls(self, wall):
         for i, (x, y) in enumerate(wall):
@@ -57,44 +65,43 @@ class Draw():
 
     def drawPoints(self, p):
         for i, (x, y) in enumerate(p):
-            self.drawHalfRect(*self.convertToPixel(*p[i]), self.pointColour)
+            self.drawCircle(*self.convertToPixel(*p[i]), self.pointColour)
 
     def drawSuperPoints(self, p):
         for i, (x, y) in enumerate(p):
-            self.drawHalfRect(*self.convertToPixel(*p[i]), (random.randint(200, 250), 40, 40))
+            self.drawCircle(*self.convertToPixel(*p[i]), (random.randint(200, 250), 40, 40))
 
     def colourRange(self):
         return
 
     def drawPlayer(self, playerPos):
-        self.drawPlayerRects(*self.convertToPixel(*playerPos))
+        self.drawPlayerItems(*self.convertToPixel(*playerPos))
 
-    def drawPlayerRects(self, x, y):
+    def drawPlayerItems(self, x, y):
+        self.drawCircle(x, y, self.playerColour, 2.5)
+
         i = self._cellsize
-        b = i / 10
-        self.drawMyRect(x, y, b, b + 20, b)
-        self.drawMyRect(x, y, b, b + 28, b)
-        self.drawMyRect(x, y, b + 5, b + 20, b)
-        self.drawMyRect(x, y, b, b + 20, b)
-        self.drawMyRect(x, y, b + 10, b + 20, b)
-        self.drawMyRect(x, y, b + 25, b + 20, b)
-        self.drawMyRect(x, y, b + 20, b, b)
-        self.drawMyRect(x, y, b + 20, b + 20, b)
+        pg.draw.circle(self._display_surface, self.BGCOLOR, (int(x+i/1.5), int(y + i/3)), int(i/7))
 
-    def drawMyRect(self, x, y, a, b, c):
-        pg.draw.rect(self._display_surface, self.DARKGRAY,
-                     (x + a, y + b, c, c), 0)
-        pg.draw.rect(self._display_surface, self.WHITE,
-                     (x + a, y + b, c, c), 2)
+        pg.draw.arc(
+        self._display_surface,
+        self.BGCOLOR,
+        (100,0,100,200),
+        90,
+        45)
 
-    def drawGhosts(self, i):
-        for a, b in enumerate(i):
-            self.drawRect(*self.convertToPixel(b[0], b[1]), self.ghostColour)
+    def drawGhosts(self, ghosts):
+        for ghost in ghosts:
+            self.drawRect(*self.convertToPixel(ghost.position[0], ghost.position[1]), ghost.colour)
 
     def drawRect(self, x, y, colour):
         i = self._cellsize
         pg.draw.rect(self._display_surface, colour, (x, y, i, i), 0)
         pg.draw.rect(self._display_surface, self.WHITE, (x, y, i, i), 2)
+
+    def drawCircle(self, x, y, colour, size = 4.2):
+        i = self._cellsize
+        pg.draw.circle(self._display_surface, colour, (int(x+i/2), int(y + i/2)), int(i/size))
 
     def drawHalfRect(self, x, y, colour):
         i = self._cellsize

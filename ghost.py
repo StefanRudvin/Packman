@@ -1,47 +1,102 @@
-# Ghost class for OOP Pacman
 from player import Player
+import random, sys, copy
 
 
 class Ghost(object):
 
-    def __init__(self, ghostPos, walls):    
+    pathFindingAlgorithms = [
+        'random',
+        'breadthFirstSearch',
+        'random',
+        'random'
+    ]
+
+    def __init__(self, position, walls, pathFindingAlgorithm='random', colorNum = 0):
         self.walls = walls
-        self.ghostPos = ghostPos
+        self.position = position
         self.nodes = self.makeNodes()
         self.found = 0
         self.visited = []
         self.debug = False
 
+        self.colors = [
+            (255, 0, 0),
+            (0, 204, 0),
+            (255, 204, 0),
+            (0, 0, 204)
+        ]
+
+        self.colour = self.colors[colorNum]
         print("Ghost class initialized.")
 
-    def moveGhost(self, playerPos, ghostPos):
-        self.bruteforce(ghostPos, playerPos)
+        self.dirs = [
+            (0, -1),
+            (0, 1),
+            (1, 0),
+            (-1, 0),
+        ]
 
-        if self.debug: print(self.nodes)
+        self.pathFindingAlgorithm = pathFindingAlgorithm
 
-        return ghostPos
+    def move(self, playerPos):
+        if self.pathFindingAlgorithm == self.pathFindingAlgorithms[0]:
+            self.position = self.random(playerPos)
+        elif self.pathFindingAlgorithm == self.pathFindingAlgorithms[1]:
+            self.position = self.breadthFirstSearch(playerPos)
+        return self.position
 
-    def bruteforce(self, ghostPos, playerPos):
-        if self.found < 600:
+    def bruteForce(self, ghostPos, playerPos):
             (a, b) = ghostPos
             self.visited.append((a,b))
-            self.found += 1
-            if self.found > 5:
-                pass
-                del self.visited[0]
-            if (a, b) == playerPos:
-                self.found = 500
+
             if (a + 1, b) in self.nodes and (a+1, b) not in self.visited:
-                self.bruteforce((a + 1, b), playerPos)
+                self.bruteForce((a + 1, b), playerPos)
             if (a - 1, b) in self.nodes and (a-1, b) not in self.visited:
-                self.bruteforce((a - 1, b), playerPos)
+                self.bruteForce((a - 1, b), playerPos)
             if (a, b + 1) in self.nodes and (a, b+1) not in self.visited:
-                self.bruteforce((a, b + 1), playerPos)
+                self.bruteForce((a, b + 1), playerPos)
             if (a, b - 1) in self.nodes and (a, b-1) not in self.visited:
-                self.bruteforce((a, b - 1), playerPos)
+                self.bruteForce((a, b - 1), playerPos)
+
+    def random(self, playerPos):
+        running = True
+        ghostPos = self.position
+        while running:
+            dirNum = random.randint(0, len(self.dirs) - 1)
+            dir = self.dirs[dirNum]
+            nextNode = (ghostPos[0] + dir[0], ghostPos[1] + dir[1])
+            if [nextNode[0], nextNode[1]] not in self.walls and nextNode[0] > 0 and nextNode[1] > 0 and nextNode[1] < 18:
+                running = False
+        return nextNode
 
 
+    def breadthFirstSearch(self, playerPos):
+        ghostPos = self.position
+        goal = tuple(playerPos)
+        start = tuple(ghostPos)
+        visited = [start]
 
+        q = [[start]]
+
+        if playerPos == self.position:
+            return self.position
+
+        while q:
+            path = q.pop(0)
+            node = path[-1]
+
+            if node == goal:
+                return path[1]
+
+            for dir in self.dirs:
+                nextNode = (dir[0] + node[0], dir[1] + node[1])
+
+                if [nextNode[0], nextNode[1]] not in self.walls and nextNode not in visited:
+                    visited.append(nextNode)
+                    newPath = copy.deepcopy(path)
+                    newPath.append(nextNode)
+                    q.append(newPath)
+        return ghostPos
 
     def makeNodes(self):
         # Witdth: 18 Height: 20
