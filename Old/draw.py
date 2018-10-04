@@ -23,6 +23,13 @@ class Draw():
         self.ghostColour = (255, 255, 255)
         self.wallColour = (40, 40, 40)
 
+        self.wallColours = [
+            (53,255,105),
+            (68,204,255),
+            (116,148,234),
+            (40, 40, 40),
+            ]
+
         pg.init()
         self._display_surface = pg.display.set_mode(self.size, self._flags)
         pg.display.set_caption("Pacman")
@@ -45,7 +52,8 @@ class Draw():
 
     def drawWalls(self, wall):
         for i, (x, y) in enumerate(wall):
-            self.drawRect(*self.convertToPixel(*wall[i]), self.wallColour)
+            randomInt = random.randint(0, len(self.wallColours) - 1)
+            self.drawRect(*self.convertToPixel(*wall[i]), self.wallColours[randomInt])
 
     def drawPoints(self, p):
         for i, (x, y) in enumerate(p):

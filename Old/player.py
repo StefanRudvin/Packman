@@ -13,8 +13,9 @@ class Player():
         self.moveHor = 0
         self.moveVert = 0
         self.walls = walls
+        self.debug = False
 
-        print("Player class initialized.")
+        if self.debug: print("Player class initialized.")
 
     def userInput(self, event):
         # Process key inputs. To be rarefactored.

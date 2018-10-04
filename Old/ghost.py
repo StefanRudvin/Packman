@@ -10,13 +10,14 @@ class Ghost(object):
         self.nodes = self.makeNodes()
         self.found = 0
         self.visited = []
+        self.debug = False
 
         print("Ghost class initialized.")
 
     def moveGhost(self, playerPos, ghostPos):
         self.bruteforce(ghostPos, playerPos)
 
-        print(self.nodes)
+        if self.debug: print(self.nodes)
 
         return ghostPos
 
