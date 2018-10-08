@@ -1,32 +1,29 @@
-# Collision class for OOP Pacman.
-
-# Takes playerPos, points and superPoints
-# Updates point score
-
-class Collision():
-    """docstring for collision."""
+class Collision:
     def __init__(self):
         print("Collision class initialized.")
         self.score = 0
+        self.points = None
+        self.superPoints = None
+        self.playerPos = None
 
-    def update(self, points, playerPos, superPoints):
+    def update(self, points, player_pos, super_points):
         self.points = points
-        self.superPoints = superPoints
-        self.playerPos = playerPos
+        self.superPoints = super_points
+        self.playerPos = player_pos
 
         for i, (j, k) in enumerate(points):
-            if (playerPos[0], playerPos[1]) == (j, k):
+            if (player_pos[0], player_pos[1]) == (j, k):
                 del self.points[i]
                 self.score += 1
 
-        for i, (j, k) in enumerate(superPoints):
-            if (playerPos[0], playerPos[1]) == (j, k):
+        for i, (j, k) in enumerate(super_points):
+            if (player_pos[0], player_pos[1]) == (j, k):
                 del self.superPoints[i]
                 self.score += 10
 
-    def checkGhostCollision(self, playerPos, ghosts):
+    def check_ghost_collision(self, player_pos, ghosts):
         for ghost in ghosts:
-            if ghost.position == playerPos:
+            if ghost.position == player_pos:
                 self.score -= 100
                 ghosts.remove(ghost)
         return ghosts

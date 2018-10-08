@@ -9,76 +9,83 @@ from ghost import Ghost
 from player import Player
 
 
+def on_terminate():
+    pg.quit()
+    sys.exit()
+
+
 class Game:
     def __init__(self):
         self._running = True
         self._clock = pg.time.Clock()
-        self.FPS = 10
+        self.FPS = 30
 
         self.ghosts = []
+        self.player = None
         self.score = 0
 
-    def on_init(self):
         self._running = True
+        self._pause = False
 
         self.level = mapGen.Map()
-        self.level.makeLevelVariables()
+        self.level.make_level_variables()
         self.draw = Draw()
         self.collision = Collision()
 
+    def on_init(self):
         # Get player and ghost variables from level class
-        self.playerPos = self.level.playerPos
-        ghostPos = self.level.ghosts
+        player_pos = self.level.playerPos
+        ghost_pos = self.level.ghosts
 
-        self.player = Player(self.playerPos, self.level.walls)
+        self.player = Player(player_pos, self.level.walls)
 
         self.ghosts = []
-        for i in range(0, len(ghostPos)):
-            self.ghosts.append(Ghost(ghostPos[i], self.level.walls, Ghost.pathFindingAlgorithms[i], i))
+        for i in range(0, len(ghost_pos)):
+            self.ghosts.append(Ghost(ghost_pos[i], self.level.walls, Ghost.pathFindingAlgorithms[i], i))
 
     def on_event(self, event):
-        if event.type == QUIT or \
-           (event.type == KEYUP and event.key == K_ESCAPE):
-            self._running = False
-
-        self.player.userInput(event)
+        self.system_keys(event)
+        self.player.user_input(event)
 
     def on_loop(self, events):
-
-        self.playerPos = self.player.movePlayer()
+        self.player.move()
 
         for ghost in self.ghosts:
-            ghost.move(self.playerPos)
+            ghost.move(self.player.position)
 
-        self.collision.update(self.level.points, self.playerPos, self.level.superpoints)
+        self.collision.update(self.level.points, self.player.position, self.level.super_points)
 
-        self.ghosts = self.collision.checkGhostCollision(self.playerPos, self.ghosts)
+        self.ghosts = self.collision.check_ghost_collision(self.player.position, self.ghosts)
         # Get variables
         self.score = self.collision.score
         self.level.points = self.collision.points
-        self.level.superpoints = self.collision.superPoints
+        self.level.superPoints = self.collision.superPoints
 
     def on_render(self):
-        # Draw() class renders everything.
         self.draw.update(pg)
-        self.draw.drawWalls(self.level.walls)
-        self.draw.drawPoints(self.level.points)
-        self.draw.drawSuperPoints(self.level.superpoints)
-        self.draw.drawPlayer(self.playerPos)
-        self.draw.drawGhosts(self.ghosts)
-        self.draw.drawScore(self.score)
-
+        self.draw.draw_walls(self.level.walls)
+        self.draw.draw_points(self.level.points)
+        self.draw.draw_super_points(self.level.super_points)
+        self.draw.draw_ghosts(self.ghosts)
+        self.draw.draw_score(self.score)
+        self.draw.draw_player(self.player.position)
         pg.display.flip()
 
-    def on_terminate(self):
-        pg.quit()
-        sys.exit()
+    def system_keys(self, event):
+        if event.type == KEYUP and event.key == K_p:
+            self._pause = not self._pause
+        elif event.type == KEYUP and event.key == K_ESCAPE:
+            on_terminate()
 
     def run(self):
         if self.on_init() is False:
             self._running = False
 
         while self._running:
+            if self._pause:
+                for event in pg.event.get(): self.system_keys(event)
+                continue
+
             self._clock.tick(self.FPS)
 
             filtered_events = []
@@ -88,7 +95,7 @@ class Game:
                     filtered_events.append(event)
             self.on_loop(filtered_events)
             self.on_render()
-        self.on_terminate()
+        on_terminate()
 
 
 if __name__ == '__main__':

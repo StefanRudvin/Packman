@@ -7,8 +7,8 @@ from pygame.locals import *
 
 class Player():
 
-    def __init__(self, playerPos, walls):
-        self.playerPos = playerPos
+    def __init__(self, player_pos, walls):
+        self.position = player_pos
 
         self.moveHor = 0
         self.moveVert = 0
@@ -17,28 +17,27 @@ class Player():
 
         if self.debug: print("Player class initialized.")
 
-    def userInput(self, event):
-        # Process key inputs. To be rarefactored.
+    def user_input(self, event):
         if event.type == KEYDOWN:
-            if (event.key == K_LEFT or event.key == K_a) and self.moveHor == 0:
+            if event.key == K_LEFT or event.key == K_a:
                 self.moveHor = -1
                 self.moveVert = 0
             elif (event.key == K_RIGHT or
-                  event.key == K_d) and self.moveHor == 0:
+                  event.key == K_d):
                 self.moveHor = 1
                 self.moveVert = 0
 
             elif (event.key == K_UP or
-                  event.key == K_w) and self.moveVert == 0:
+                  event.key == K_w):
                 self.moveVert = 1
                 self.moveHor = 0
             elif (event.key == K_DOWN or
-                  event.key == K_s) and self.moveVert == 0:
+                  event.key == K_s):
                 self.moveVert = -1
                 self.moveHor = 0
 
-    def movePlayer(self):
-        x = self.playerPos
+    def move(self):
+        x = self.position
         h = self.moveHor
         v = self.moveVert
 
@@ -55,19 +54,15 @@ class Player():
                 x = (x[0], x[1] + 1)
             # v = 0
 
-        if not self.isBlocked(x[0], x[1]):
+        if not self.is_blocked(x[0], x[1]):
             if x[0] < 0:
                 x = (18, x[1])
             elif x[0] > 18:
                 x = (0, x[1])
-            self.playerPos = x
+            self.position = x
 
         self.moveHor = h
         self.moveVert = v
 
-        return self.playerPos
-
-    def isBlocked(self, x, y):
-        if [x, y] in self.walls:
-            print("Blocked!")
-            return True
+    def is_blocked(self, x, y):
+        return [x, y] in self.walls

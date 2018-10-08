@@ -13,37 +13,37 @@ class Map():
         self.ghosts = []
         self.walls = []
         self.points = []
-        self.superpoints = []
+        self.super_points = []
 
         print("MapGen class initialized.")
 
-    def getLevel(self):
+    def get_level(self):
         assert os.path.exists(
-            self._filename), 'Cant find the level file: %s' % (self._filename)
-        mapFile = open(self._filename, 'r')
-        content = mapFile.readlines() + ['\r\n']
-        mapFile.close()
+            self._filename), 'Cant find the level file: %s' % self._filename
+        map_file = open(self._filename, 'r')
+        content = map_file.readlines() + ['\r\n']
+        map_file.close()
 
         level = []
-        mapObj = []
+        map_obj = []
 
-        for linenum in range(len(content)):
-            line = content[linenum].rstrip('\r\n')
+        for line_num in range(len(content)):
+            line = content[line_num].rstrip('\r\n')
 
             if line != '':
                 level.append(line)
 
         for x in range(len(level[0])):
-            mapObj.append([])
+            map_obj.append([])
         for y in range(len(level)):
             for x in range(len(level[0])):
-                mapObj[x].append(level[y][x])
+                map_obj[x].append(level[y][x])
 
-        self.level = mapObj
+        self.level = map_obj
 
-    def makeLevelVariables(self):
+    def make_level_variables(self):
 
-        self.getLevel()
+        self.get_level()
 
         for x in range(len(self.level)):
             for y in range(len(self.level[0])):
@@ -57,4 +57,4 @@ class Map():
                 elif point == "o":
                     self.points.append([x, y])
                 elif point == "z":
-                    self.superpoints.append([x, y])
+                    self.super_points.append([x, y])
