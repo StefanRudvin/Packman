@@ -6,8 +6,9 @@ class Level:
 	player, ghost, walls, points, superpoints. Also provides getter functions for
 	each of the previous."""
 
-	def __init__(self):
-		self._filename = "Level1.txt"
+	def __init__(self, level):
+		self.current_level = level
+		self._filename = "Level" + str(level) + ".txt"
 		self.level = []
 		self.playerPos = (0, 0)
 		self.ghosts = []

@@ -14,8 +14,9 @@ def heuristic(a, b):
 
 
 class PathFind(object):
-	def __init__(self, walls, speedDivider=5):
+	def __init__(self, walls, level, speed_divider=2):
 		self.walls = walls
+		self.level = level
 		self.dirs = [
 			(0, -1),
 			(0, 1),
@@ -24,7 +25,7 @@ class PathFind(object):
 		]
 		self.path = []
 		self.counter = 0
-		self.speedDivider = speedDivider
+		self.speedDivider = speed_divider
 		self.nodes = self.make_nodes()
 		self.playerPos = None
 		self.two_previous = []
@@ -161,8 +162,8 @@ class PathFind(object):
 
 	def make_nodes(self):
 		ar = []
-		for x in range(18):
-			for y in range(20):
+		for x in range(self.level.height - 1):
+			for y in range(self.level.width - 1):
 				if [x, y] not in self.walls:
 					ar.append((x, y))
 		return ar

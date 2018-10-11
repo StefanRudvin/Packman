@@ -16,9 +16,9 @@ class Ghost(object):
 	BLUE = (0, 0, 204)
 	PURPLE = (255, 0, 204)
 
-	def __init__(self, position, walls, pathFindingAlgorithm='random', colorNum=0, speed_divider=5):
+	def __init__(self, position, walls, level, pathFindingAlgorithm='random', colorNum=0, speed_divider=5):
 		self.position = position
-		self.pathFind = PathFind(walls)
+		self.pathFind = PathFind(walls, level)
 
 		self.colors = [
 			self.GREEN,

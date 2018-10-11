@@ -7,15 +7,30 @@ from pygame.locals import *
 
 class Player():
 
-    def __init__(self, player_pos, walls):
+    def __init__(self, player_pos, walls, level):
         self.position = player_pos
 
+        self.level = level
         self.moveHor = 0
         self.moveVert = 0
+        self.lives = 5
         self.walls = walls
         self.debug = True
 
-        if self.debug: print("Player class initialized.")
+        self.color = (255, 255, 0)
+        self.super_mode_counter = 0
+
+        if self.debug:
+            print("Player class initialized.")
+
+    def update(self):
+        self.move()
+
+        if self.super_mode_counter > 0:
+            self.color = (255 - self.super_mode_counter, 100 - self.super_mode_counter, 0)
+            self.super_mode_counter -= 1
+        else:
+            self.color = (255, 255, 0)
 
     def user_input(self, event):
         if event.type == KEYDOWN:
@@ -56,8 +71,8 @@ class Player():
 
         if not self.is_blocked(x[0], x[1]):
             if x[0] < 0:
-                x = (18, x[1])
-            elif x[0] > 18:
+                x = (self.level.height - 1, x[1])
+            elif x[0] > self.level.height - 1:
                 x = (0, x[1])
             self.position = x
 

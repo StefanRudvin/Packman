@@ -6,7 +6,8 @@ class Collision:
         self.superPoints = None
         self.playerPos = None
 
-    def update(self, points, player_pos, super_points):
+    def update(self, points, player, super_points):
+        player_pos = player.position
         self.points = points
         self.superPoints = super_points
         self.playerPos = player_pos
@@ -19,11 +20,16 @@ class Collision:
         for i, (j, k) in enumerate(super_points):
             if (player_pos[0], player_pos[1]) == (j, k):
                 del self.superPoints[i]
+                player.super_mode_counter = 100
                 self.score += 10
 
-    def check_ghost_collision(self, player_pos, ghosts):
+    def check_ghost_collision(self, player, ghosts):
         for ghost in ghosts:
-            if ghost.position == player_pos:
-                self.score -= 100
+            if ghost.position == player.position:
+                if player.super_mode_counter > 0:
+                    self.score += 100
+                else:
+                    self.score -= 100
+                    player.lives -= 1
                 ghosts.remove(ghost)
         return ghosts
