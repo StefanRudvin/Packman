@@ -1,10 +1,9 @@
 import pygame as pg
-from pygame.locals import *
 import random
 from ghost import Ghost
 
 
-class Draw():
+class Draw:
     """Draw class for OOP pacman"""
 
     def __init__(self):
@@ -13,6 +12,7 @@ class Draw():
         self.size = self._width, self._height = 760, 840
         self._display_surface = None
         self._flags = pg.HWSURFACE | pg.DOUBLEBUF
+        self.draw_path_bool = True
 
         self.BG_COLOR = (42, 45, 52)
         self.DARK_GRAY = (40, 40, 40)
@@ -89,8 +89,10 @@ class Draw():
             45)
 
     def draw_path(self, path, ghost):
+        if not self.draw_path_bool:
+            return
         for node in path:
-            if ghost.colour == Ghost.GREEN:
+            if ghost.colour == Ghost.PURPLE:
                 pos = self.convert_to_pixel(node[0], node[1])
                 self.draw_circle(pos[0] + 12, pos[1] + 12, ghost.colour, 7)
             elif ghost.colour == Ghost.YELLOW:
