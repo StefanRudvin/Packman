@@ -5,15 +5,14 @@ from pygame.locals import *
 # Returns players next move based on events.
 
 
-class Player():
-
+class Player:
     def __init__(self, player_pos, walls, level):
         self.position = player_pos
 
         self.level = level
         self.moveHor = 0
         self.moveVert = 0
-        self.lives = 5
+        self.lives = 10
         self.walls = walls
         self.debug = True
 

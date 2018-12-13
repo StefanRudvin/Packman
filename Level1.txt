@@ -5,7 +5,7 @@
 #o##o#o#####o#o##o#
 #oooo#ooo#ooo#oooo#
 ####o###o#o###o####
-xxx#o#ooo1ooo#o#xxx
+xxx#o#ooooooo#o#xxx
 ####o#o##1##o#o####
 ooooooo#111#ooooooo
 ####o#o#####o#o####

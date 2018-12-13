@@ -23,7 +23,7 @@ class Game:
 		self.ghosts = []
 		self.player = None
 		self.score = 0
-		self.current_level = 1
+		self.current_level = 2
 
 		self._running = True
 		self._pause = False
@@ -43,7 +43,9 @@ class Game:
 		self.ghosts = []
 		for i in range(0, len(ghost_pos)):
 			self.ghosts.append(
-				Ghost(ghost_pos[i], self.level.walls, self.level, Ghost.pathFindingAlgorithms[i], i, i * 2))
+				#Ghost(ghost_pos[i], self.level.walls, self.level, Ghost.pathFindingAlgorithms[i], i, i * 2)
+				Ghost(ghost_pos[2], self.level.walls, self.level, Ghost.pathFindingAlgorithms[i], i, i * 2)
+			)
 
 	def on_event(self, event):
 		self.system_keys(event)
@@ -53,7 +55,7 @@ class Game:
 		self.player.update()
 
 		for ghost in self.ghosts:
-			ghost.move(self.player.position)
+			ghost.move(self.player)
 
 		self.collision.update(self.level.points, self.player, self.level.super_points)
 

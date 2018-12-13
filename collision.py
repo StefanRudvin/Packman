@@ -31,5 +31,5 @@ class Collision:
                 else:
                     self.score -= 100
                     player.lives -= 1
-                ghosts.remove(ghost)
+                ghost.die()
         return ghosts

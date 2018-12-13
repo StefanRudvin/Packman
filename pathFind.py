@@ -14,7 +14,7 @@ def heuristic(a, b):
 
 
 class PathFind(object):
-	def __init__(self, walls, level, speed_divider=2):
+	def __init__(self, walls, level, speed_divider=1):
 		self.walls = walls
 		self.level = level
 		self.dirs = [
@@ -38,7 +38,8 @@ class PathFind(object):
 
 		goal = tuple(player_pos)
 		start = tuple(ghost_pos)
-		visited = [start]
+		visited = set()
+		visited.add(start)
 		q = [[start]]
 
 		while q:
@@ -51,12 +52,14 @@ class PathFind(object):
 
 			for dir in self.available_dirs(node):
 				next_node = (dir[0] + node[0], dir[1] + node[1])
+
 				if next_node not in visited:
-					visited.append(next_node)
-					new_path = copy.deepcopy(path)
+					visited.add(next_node)
+					new_path = copy.copy(path)
 					new_path.append(next_node)
 					q.append(new_path)
 		return ghost_pos
+
 
 	def dfs_heuristic(self, player_pos, ghost_pos):
 		if not self.wait():
@@ -208,7 +211,7 @@ class PathFind(object):
 					heapq.heappush(heap, (heuristic(next_node, player_pos) + len(cp), next_node, cp))
 		return ghost_pos
 
-	def djikstra(self, player_pos, ghost_pos):
+	def best_first_search(self, player_pos, ghost_pos):
 		if not self.wait():
 			return ghost_pos
 
@@ -216,7 +219,7 @@ class PathFind(object):
 			return ghost_pos
 
 		heap = []
-		heapq.heappush(heap, (0, ghost_pos, []))
+		heapq.heappush(heap, (heuristic(ghost_pos, player_pos), ghost_pos, []))
 		visited_set = set()
 		ret = []
 
@@ -244,6 +247,41 @@ class PathFind(object):
 				cp = copy.copy(current_path)
 
 				if next_node not in visited_set:
+					cp.append(current_node)
+					heapq.heappush(heap, (heuristic(next_node, player_pos), next_node, cp))
+		return ghost_pos
+
+	def djikstra(self, player_pos, ghost_pos):
+		if not self.wait():
+			return ghost_pos
+		if player_pos == ghost_pos:
+			return ghost_pos
+
+		heap = []
+		heapq.heappush(heap, (0, ghost_pos, []))
+		visited_set = set()
+		visited_set.add(tuple(ghost_pos))
+
+		while heap:
+			heapq.heapify(heap)
+			current_heap = heapq.heappop(heap)
+			current_node = tuple(current_heap[1])
+			current_path = current_heap[2]
+
+			if current_node == player_pos:
+				current_path.append(current_node)
+				self.path = current_path
+				if len(current_path) > 1:
+					return current_path[1]
+				else:
+					return current_path[0]
+
+			for direction in self.available_dirs(current_node):
+				next_node = add_tuples(direction, current_node)
+				cp = copy.copy(current_path)
+
+				if next_node not in visited_set:
+					visited_set.add(next_node)
 					cp.append(current_node)
 					heapq.heappush(heap, (len(cp), next_node, cp))
 		return ghost_pos
